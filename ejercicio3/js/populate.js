@@ -27,59 +27,68 @@ function createObjects(){
 }
 
 function initPopulate(sh){
-    var shops = sh.shops;
-    var shop = shops.next();
-    var divSct1 = document.getElementById("sct1");
+    return function(){
+        var shops = sh.shops;
+        var shop = shops.next();
+        var divSct1 = document.getElementById("sct1");
+        var divSct1 = document.getElementById("sct1");
+        
+        removeChildsElement(divSct1);
 
-    while (!shop.done){
-        divCol = document.createElement("div");
-        divCol.setAttribute("class", "col-sm-4 col-lg-4 col-md-4");
-        
-        divThumb = document.createElement("div");
-        divThumb.setAttribute("class", "thumbnail");
-        
-        img = document.createElement("img");
-        img.setAttribute("src", "http://placehold.it/320x150");
-        divThumb.appendChild(img);
-        
-        divCap = document.createElement("div");
-        divCap.setAttribute("class", "caption");
-    
-        h4 = document.createElement("h4");
-        a = document.createElement("a");
-        a.setAttribute("href", "#");
-        a.appendChild(document.createTextNode(shop.value.name));
-        h4.appendChild(a);
-        divCap.appendChild(h4);
-        
-        p = document.createElement("p");
-        p.appendChild(document.createTextNode("Dirección: "+shop.value.direction));
-        divCap.appendChild(p);
-        
-        p = document.createElement("p");
-        p.appendChild(document.createTextNode("Teléfono: "+shop.value.direction));
-        divCap.appendChild(p);
-        
-        button = document.createElement("button");
-        button.setAttribute("type", "button");
-        button.setAttribute("class", "btn btn-primary");
-    button.appendChild(document.createTextNode("Ver Productos"));
-        button.addEventListener("click", shopPopulate(shop.value));
-        divCap.appendChild(button);
-        
-        
-        divThumb.appendChild(divCap);
-        divCol.appendChild(divThumb);
-        divSct1.appendChild(divCol);
+        while (!shop.done){
+            divCol = document.createElement("div");
+            divCol.setAttribute("class", "col-sm-4 col-lg-4 col-md-4");
 
-        shop = shops.next();
-    }
+            divThumb = document.createElement("div");
+            divThumb.setAttribute("class", "thumbnail");
+
+            img = document.createElement("img");
+            img.setAttribute("src", "http://placehold.it/320x150");
+            divThumb.appendChild(img);
+
+            divCap = document.createElement("div");
+            divCap.setAttribute("class", "caption");
+
+            h4 = document.createElement("h4");
+            a = document.createElement("a");
+            a.setAttribute("href", "#");
+            a.appendChild(document.createTextNode(shop.value.name));
+            h4.appendChild(a);
+            divCap.appendChild(h4);
+
+            p = document.createElement("p");
+            p.appendChild(document.createTextNode("Dirección: "+shop.value.direction));
+            divCap.appendChild(p);
+
+            p = document.createElement("p");
+            p.appendChild(document.createTextNode("Teléfono: "+shop.value.direction));
+            divCap.appendChild(p);
+
+            button = document.createElement("button");
+            button.setAttribute("type", "button");
+            button.setAttribute("class", "btn btn-primary");
+        button.appendChild(document.createTextNode("Ver Productos"));
+            button.addEventListener("click", shopPopulate(shop.value, sh));
+            divCap.appendChild(button);
+
+
+            divThumb.appendChild(divCap);
+            divCol.appendChild(divThumb);
+            divSct1.appendChild(divCol);
+
+            shop = shops.next();
+        }
+    }    
 }
 
 function shopsMenusPopulate (erp){
+    
+    var ini = document.getElementsByClassName("navbar-header");
     var ul = document.getElementById("navShop");   
     var shops = erp.shops;
     var shop = shops.next();
+    
+    ini[0].addEventListener("click", initPopulate(erp));
     
     while (shop.done !== true){
         var li = document.createElement("li");
@@ -102,7 +111,7 @@ function removeChildsElement(element){
     }
 }
 
-function shopPopulate(shop){
+function shopPopulate(shop, erp){
     return function(){
         var divSct1 = document.getElementById("sct1");
         removeChildsElement(divSct1);
@@ -125,7 +134,7 @@ function shopPopulate(shop){
             a = document.createElement("a");
             a.setAttribute("href", "#");
             a.appendChild(document.createTextNode(shop.products[i].product.name));
-
+            a.addEventListener("click", productShopPopulate(shop.products[i].product));
             h4.appendChild(a);
             divCap.appendChild(h4);
 
@@ -146,19 +155,20 @@ function shopPopulate(shop){
             divCol.appendChild(divThumb);
             divSct1.appendChild(divCol);
         }
-     }
+        menuCategoryShopPopulate(shop, erp);
+   }
 }
 
 function menuCategoryShopPopulate(shop, erp){
     var categoriesShop = [];
-    var name;
+    var category;
     var cat = document.getElementById("listCategories");
        
     for (var i=0; i<shop.products.length; i++){
-        name = productCategory(shop.products[i], erp);
+        category = productCategory(shop.products[i], erp);
         
         if (name != -1){
-            categoriesShop.push(name)
+            categoriesShop.push(category);
         }
     }
     
@@ -166,7 +176,8 @@ function menuCategoryShopPopulate(shop, erp){
         a = document.createElement("a");
         a.setAttribute("href", "#");
         a.setAttribute("class", "list-group-item");
-        a.appendChild(document.createTextNode(categoriesShop[i]));
+        a.appendChild(document.createTextNode(categoriesShop[i].title));
+        a.addEventListener("click", productsCategoryShopPopulate(erp, shop, categoriesShop[i]));
         cat.appendChild(a);
     }
       
@@ -187,7 +198,7 @@ function productCategory(product, erp){
             
            index = category.value.products.findIndex(compareElements);          
            if (index != -1){
-                return category.value.title;
+                return category.value;
            }
             category = categories.next();
         }
@@ -196,85 +207,78 @@ function productCategory(product, erp){
 }
 
 function productsCategoryShopPopulate(erp, shop, category){
-    
-    function compareElements(element){
-			return (element.serialNumber === shop.products[i].serialNumber)
-	}
-    
-    var productsCategory = [];
-    var index;
-        
-    for (var i=0; i<shop.products.length; i++){
-        index = category.products.findIndex(compareElements);
-        
-        if (index != -1){
-                console.log(shop.products[i].product.name);
-                productsCategory.push(shop.products[i]);
-                
+    return function(){
+        function compareElements(element){
+                return (element.serialNumber === shop.products[i].serialNumber)
+        }
+
+        var productsCategory = [];
+        var index;
+
+        for (var i=0; i<shop.products.length; i++){
+            index = category.products.findIndex(compareElements);
+
+            if (index != -1){
+                    productsCategory.push(shop.products[i]);
+
+            }
+        }
+
+        var divSct1 = document.getElementById("sct1");
+        removeChildsElement(divSct1);
+
+        for(var i=0; i<productsCategory.length; i++){
+            divCol = document.createElement("div");
+            divCol.setAttribute("class", "col-sm-4 col-lg-4 col-md-4");
+
+            divThumb = document.createElement("div");
+            divThumb.setAttribute("class", "thumbnail");
+
+            img = document.createElement("img");
+            img.setAttribute("src", "http://placehold.it/320x150");
+            divThumb.appendChild(img);
+
+            divCap = document.createElement("div");
+            divCap.setAttribute("class", "caption");
+
+            h4 = document.createElement("h4");
+            a = document.createElement("a");
+            a.setAttribute("href", "#");
+            a.appendChild(document.createTextNode(productsCategory[i].product.name));
+            a.addEventListener("click", productShopPopulate(productsCategory[i].product));
+            h4.appendChild(a);
+            divCap.appendChild(h4);
+
+            h4price = document.createElement("h4");
+            h4price.setAttribute("class", "pull-right");
+            divCap.appendChild(h4price);
+
+            p = document.createElement("p");
+            p.appendChild(document.createTextNode(productsCategory[i].product.description));
+            divCap.appendChild(p);
+
+            p = document.createElement("p");
+            p.appendChild(document.createTextNode("Tax: "+productsCategory[i].product.tax));
+            divCap.appendChild(p);
+
+            divThumb.appendChild(divCap);
+            divCol.appendChild(divThumb);
+            divSct1.appendChild(divCol);
         }
     }
-    
-    var divSct1 = document.getElementById("sct1");
-    
-    for(var i=0; i<productsCategory.length; i++){
-        divCol = document.createElement("div");
-        divCol.setAttribute("class", "col-sm-4 col-lg-4 col-md-4");
-        
-        divThumb = document.createElement("div");
-        divThumb.setAttribute("class", "thumbnail");
-        
-        img = document.createElement("img");
-        img.setAttribute("src", "http://placehold.it/320x150");
-        divThumb.appendChild(img);
-        
-        divCap = document.createElement("div");
-        divCap.setAttribute("class", "caption");
-    
-        h4 = document.createElement("h4");
-        a = document.createElement("a");
-        a.setAttribute("href", "#");
-        a.appendChild(document.createTextNode(productsCategory[i].product.name));
-        h4.appendChild(a);
-        divCap.appendChild(h4);
-        
-        h4price = document.createElement("h4");
-        h4price.setAttribute("class", "pull-right");
-        divCap.appendChild(h4price);
-        
-        p = document.createElement("p");
-        p.appendChild(document.createTextNode(productsCategory[i].product.description));
-        divCap.appendChild(p);
-        
-        p = document.createElement("p");
-        p.appendChild(document.createTextNode("Tax: "+productsCategory[i].product.tax));
-        divCap.appendChild(p);
-        
-        divThumb.appendChild(divCap);
-        divCol.appendChild(divThumb);
-        divSct1.appendChild(divCol);
-    }
-    
 }
 
-function productShopPopulate(erp, shop, product){
-        var sect2 = document.getElementById("prod-info");
-        
-        function compareElements(element){
-            console.log(element.serialNumber);
-            console.log(product.serialNumber);
-			return (element.serialNumber === product.serialNumber)
-		}
-        var products = erp.getShopProducts(shop);
-		var index = products.findIndex(compareElements);
-        
-        var node = document.createElement("article");
-        var par = document.createElement("p");
-        var textnode = document.createTextNode(products[index].product.toString()+products[index].stock);
-        
-        par.appendChild(textnode);
-        node.appendChild(par);
-        sect2.appendChild(node);
-     
+function productShopPopulate(product){
+    
+   return function(){
+		alert(product.toString()+" Stock: "+product.stock);
+	}  
+}
+
+function globalProductPopulate(product){
+    return function(){
+		alert(product.toString());
+	} 
 }
 
 
