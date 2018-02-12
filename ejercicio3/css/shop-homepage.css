@@ -22,7 +22,7 @@ body {
 }
 
 .caption {
-    height: 130px;
+    height: 150px;
     overflow: hidden;
 }
 
@@ -30,8 +30,9 @@ body {
     white-space: nowrap;
 }
 
-.thumbnail img {
-    width: 100%;
+caption {
+    height: 150px;
+    overflow: hidden;
 }
 
 .ratings {

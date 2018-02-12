@@ -31,8 +31,11 @@ function initPopulate(sh){
         var shops = sh.shops;
         var shop = shops.next();
         var divSct1 = document.getElementById("sct1");
-        var divSct1 = document.getElementById("sct1");
-        
+        var catMenu = document.getElementById("catMenu");
+        var cat = document.getElementById("listCategories");
+    
+        catMenu.setAttribute("hidden", "true");
+        removeChildsElement(cat);
         removeChildsElement(divSct1);
 
         while (!shop.done){
@@ -66,8 +69,8 @@ function initPopulate(sh){
 
             button = document.createElement("button");
             button.setAttribute("type", "button");
-            button.setAttribute("class", "btn btn-primary");
-        button.appendChild(document.createTextNode("Ver Productos"));
+            button.setAttribute("class", "btn btn-primary pull-right");
+            button.appendChild(document.createTextNode("Ver Productos"));
             button.addEventListener("click", shopPopulate(shop.value, sh));
             divCap.appendChild(button);
 
@@ -95,6 +98,7 @@ function shopsMenusPopulate (erp){
         
         var a = document.createElement("a");
         a.setAttribute("href", "#");
+        a.addEventListener("click", shopPopulate(shop.value, erp));
         a.appendChild(document.createTextNode(shop.value.name));
         
         li.appendChild(a);
@@ -150,6 +154,12 @@ function shopPopulate(shop, erp){
             p = document.createElement("p");
             p.appendChild(document.createTextNode("Tax: "+shop.products[i].product.tax));
             divCap.appendChild(p);
+            
+            a = document.createElement("a");
+            a.appendChild(document.createTextNode("Ver info general"));
+            a.setAttribute("class", "pull-right");
+            a.addEventListener("click", globalProductPopulate(shop.products[i].product))
+            divCap.appendChild(a);
 
             divThumb.appendChild(divCap);
             divCol.appendChild(divThumb);
@@ -162,7 +172,12 @@ function shopPopulate(shop, erp){
 function menuCategoryShopPopulate(shop, erp){
     var categoriesShop = [];
     var category;
+    var catMenu = document.getElementById("catMenu");
     var cat = document.getElementById("listCategories");
+    
+    removeChildsElement(cat);
+    
+    catMenu.setAttribute("hidden", "false");
        
     for (var i=0; i<shop.products.length; i++){
         category = productCategory(shop.products[i], erp);
@@ -248,8 +263,9 @@ function productsCategoryShopPopulate(erp, shop, category){
             a.addEventListener("click", productShopPopulate(productsCategory[i].product));
             h4.appendChild(a);
             divCap.appendChild(h4);
-
+            
             h4price = document.createElement("h4");
+            h4price.appendChild(document.createTextNode(productsCategory[i].product.price+" €"));
             h4price.setAttribute("class", "pull-right");
             divCap.appendChild(h4price);
 
@@ -260,7 +276,13 @@ function productsCategoryShopPopulate(erp, shop, category){
             p = document.createElement("p");
             p.appendChild(document.createTextNode("Tax: "+productsCategory[i].product.tax));
             divCap.appendChild(p);
-
+            
+             a = document.createElement("a");
+            a.appendChild(document.createTextNode("Ver info general"));
+            a.setAttribute("class", "pull-right");
+            a.addEventListener("click", globalProductPopulate(shop.products[i].product))
+            divCap.appendChild(a);
+            
             divThumb.appendChild(divCap);
             divCol.appendChild(divThumb);
             divSct1.appendChild(divCol);
@@ -281,11 +303,6 @@ function globalProductPopulate(product){
 	} 
 }
 
-
-
-function globalProductPopulate(product){
-    
-}
 
         var sh = new StoreHouse();
         sh.name = "Test";
@@ -313,7 +330,8 @@ function globalProductPopulate(product){
         sh.addProduct(pro2, cat2);
         sh.addProductInShop(pro1, shop1);
         sh.addProductInShop(pro2, shop1);
-
+        sh.addProductInShop(pro1, shop2);
+        sh.addProductInShop(pro2, shop2);
     
         initPopulate(sh);
         shopsMenusPopulate(sh);
