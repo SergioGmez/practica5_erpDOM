@@ -1,29 +1,52 @@
 "use strick";
 
-function createObjects(){
-        var sh = new StoreHouse();
-        sh.name = "Test";
+function createObjects(sh){
         var cat1 = new Category("Ropa");
         cat1.description = "Todo tipo de ropa";
         var cat2 = new Category("Tecnología");
         cat2.description = "Todo tipo de aparato electrónico";
         var cat2 = new Category("Musica");
         cat2.description = "Todo lo relacionado con musica";
-        var pro1 = new Product(1111, "Camiseta", 19.99);; 
-        var pro2 = new Product(2222, "Portatil", 321.99);
-        var pro3 = new Product(3333, "Zapatos", 27.99);; 
+        var pro1 = new Product(1111, "Camiseta", 19.99);
+        var pro2 = new Product(2222, "Portatil", 321.99)
+        var pro3 = new Product(3333, "Zapatos", 27.99);
+        var pro4 = new Product(4444, "Vaqueros", 16.99);
+        var pro5 = new Product(5555, "Movil", 189.49);
         var coor1 = new Coords(14, 68);
         var shop1 = new Shop(1234, "shirtShop", coor1);
-        var shop2 = new Shop(4321, "tecnoShop", coor1);1
-        var sh = new StoreHouse();
+        var shop2 = new Shop(4321, "tecnoShop", coor1);
+        var shop3 = new Shop(6221, "sportShop", coor1);
         var book = new Book(4444, "ESDLA", 20, 576);
         var tv = new TV(5555, "TV1", 1450, 48);
+
         
-        sh.addShop(shop1);
-        sh.addShop(shop2);
+        
+        sh.addProduct(pro1, cat1);
+        sh.addProduct(pro3, cat1);
+        sh.addProduct(pro4, cat1);
+        sh.addProduct(pro2, cat2);
+        sh.addProduct(pro5, cat2);
+    
         sh.addProductInShop(pro1, shop1);
         sh.addProductInShop(pro2, shop1);
         sh.addProductInShop(pro3, shop1);
+        sh.addProductInShop(pro4, shop1);
+        sh.addProductInShop(pro1, shop2);
+        sh.addProductInShop(pro2, shop2);
+        sh.addProductInShop(pro4, shop2);
+        sh.addProductInShop(pro3, shop3);
+        sh.addProductInShop(pro4, shop3);
+        sh.addProductInShop(pro5, shop3);  
+    
+        sh.removeShop(shop3);
+}
+
+function init(sh){
+    var initPop = initPopulate(sh);
+    initPop();
+    shopsMenusPopulate(sh);
+    
+    
 }
 
 function initPopulate(sh){
@@ -170,6 +193,11 @@ function shopPopulate(shop, erp){
 }
 
 function menuCategoryShopPopulate(shop, erp){
+    
+    function compareCategories(element){
+			return (element.title === category.title)
+	}
+    
     var categoriesShop = [];
     var category;
     var catMenu = document.getElementById("catMenu");
@@ -181,8 +209,9 @@ function menuCategoryShopPopulate(shop, erp){
        
     for (var i=0; i<shop.products.length; i++){
         category = productCategory(shop.products[i], erp);
+        categoryRep = categoriesShop.findIndex(compareCategories);
         
-        if (name != -1){
+        if (category != -1 && categoryRep == -1){
             categoriesShop.push(category);
         }
     }
@@ -235,7 +264,6 @@ function productsCategoryShopPopulate(erp, shop, category){
 
             if (index != -1){
                     productsCategory.push(shop.products[i]);
-
             }
         }
 
@@ -306,38 +334,8 @@ function globalProductPopulate(product){
 
         var sh = new StoreHouse();
         sh.name = "Test";
-        var cat1 = new Category("Ropa");
-        cat1.description = "Todo tipo de ropa";
-        var cat2 = new Category("Tecnología");
-        cat2.description = "Todo tipo de aparato electrónico";
-        var cat2 = new Category("Musica");
-        cat2.description = "Todo lo relacionado con musica";
-        var pro1 = new Product(1111, "Camiseta", 19.99);; 
-        var pro2 = new Product(2222, "Portatil", 321.99);
-        var pro3 = new Product(3333, "Zapatos", 27.99);; 
-        var coor1 = new Coords(14, 68);
-        var shop1 = new Shop(1234, "shirtShop", coor1);
-        var shop2 = new Shop(4321, "tecnoShop", coor1);
-        var shop3 = new Shop(5321, "SportShop", coor1);
-        var sh = new StoreHouse();
-        var book = new Book(4444, "ESDLA", 20, 576);
-        var tv = new TV(5555, "TV1", 1450, 48);
+
+        createObjects(sh);
+        window.onload = init(sh);
         
-        sh.addShop(shop1);
-        sh.addShop(shop2);
-        sh.addShop(shop3);
-        sh.addProduct(pro1, cat1);
-        sh.addProduct(pro2, cat2);
-        sh.addProductInShop(pro1, shop1);
-        sh.addProductInShop(pro2, shop1);
-        sh.addProductInShop(pro1, shop2);
-        sh.addProductInShop(pro2, shop2);
-    
-        initPopulate(sh);
-        shopsMenusPopulate(sh);
-        //shopPopulate(shop1);
-        //menuCategoryShopPopulate(shop1, sh);
-        //productsCategoryShopPopulate(sh, shop1, cat2);
-
-
     
