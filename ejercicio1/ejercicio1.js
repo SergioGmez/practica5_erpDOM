@@ -1,5 +1,4 @@
 function listElement (element){
-    var li = document.createElement("li");
     var ul = document.createElement("ul"); 
     
     var childrens = element.children;
