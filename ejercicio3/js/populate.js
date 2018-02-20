@@ -10,17 +10,44 @@ function createObjects(sh){
     cat3.description = "Todo lo relacionado con la lectura";
     
    var pro1 = new Product(1111, "Camiseta", 19.99);
+   pro1.description = "Camiseta Roja para hombre";
+   pro1.tax = 3;
+   pro1.images.push("imagenes/camiseta_roja.jpg")    
    var pro2 = new Product(2222, "Portatil", 321.99)
+   pro2.description = "HP - BS017 - i5 - 15.6";
+   pro2.tax = 4;
+   pro2.images.push("imagenes/portatil.jpg")
    var pro3 = new Product(3333, "Zapatos", 27.99);
+   pro3.description = "Zapatos Hugo Boss";
+   pro3.tax = 4;
+   pro3.images.push("imagenes/zapatos.jpg")
    var pro4 = new Product(4444, "Vaqueros", 16.99);
+   pro4.description = "Vaquero Pepe Jeans Soho Z63";
+   pro4.tax = 5;
+   pro4.images.push("imagenes/vaqueros.jpg")
    var pro5 = new Product(5555, "Movil", 189.49);
+   pro5.description = " Móvil Huawei P8 Lite - Negro";
+   pro5.tax = 5;
+   pro5.images.push("imagenes/movil.jpg")
    var book = new Book(6666, "ESDLA", 20, 576);
+   book.description = "La comunidad del anillo (tapa dura)";
+   book.tax = 6;
+   book.images.push("imagenes/esdla.jpg")    
    var tv = new TV(7777, "TV1", 1450, 48);
+   tv.description = "WXGA LED HD";
+   tv.tax = 6;
+   tv.images.push("imagenes/tv.jpg") 
     
    var coor1 = new Coords(14, 68);
    var shop1 = new Shop(1234, "Shop1", coor1);
+   shop1.direction = "C/ San Marcos N32";
+   shop1.phone = 123456789;    
    var shop2 = new Shop(4321, "Shop2", coor1);
+   shop2.direction = "C/ Calle1 N2";
+   shop2.phone = 987654321; 
    var shop3 = new Shop(6221, "Shop3", coor1);
+   shop3.direction = "C/ Calle Falsa N74";
+   shop3.phone = 282822110; 
         
    sh.addProduct(pro1, cat1);
    sh.addProduct(pro3, cat1);
@@ -64,35 +91,35 @@ function initPopulate(sh){
         removeChildsElement(divSct1);
 
         while (!shop.done){
-            divCol = document.createElement("div");
+            var divCol = document.createElement("div");
             divCol.setAttribute("class", "col-sm-4 col-lg-4 col-md-4");
 
-            divThumb = document.createElement("div");
+            var divThumb = document.createElement("div");
             divThumb.setAttribute("class", "thumbnail");
 
-            img = document.createElement("img");
+            var img = document.createElement("img");
             img.setAttribute("src", "http://placehold.it/320x150");
             divThumb.appendChild(img);
 
-            divCap = document.createElement("div");
+            var divCap = document.createElement("div");
             divCap.setAttribute("class", "caption");
 
-            h4 = document.createElement("h4");
-            a = document.createElement("a");
+            var h4 = document.createElement("h4");
+            var a = document.createElement("a");
             a.setAttribute("href", "#");
             a.appendChild(document.createTextNode(shop.value.name));
             h4.appendChild(a);
             divCap.appendChild(h4);
 
-            p = document.createElement("p");
+            var p = document.createElement("p");
             p.appendChild(document.createTextNode("Dirección: "+shop.value.direction));
             divCap.appendChild(p);
 
             p = document.createElement("p");
-            p.appendChild(document.createTextNode("Teléfono: "+shop.value.direction));
+            p.appendChild(document.createTextNode("Teléfono: "+shop.value.phone));
             divCap.appendChild(p);
 
-            button = document.createElement("button");
+            var button = document.createElement("button");
             button.setAttribute("type", "button");
             button.setAttribute("class", "btn btn-primary pull-right");
             button.appendChild(document.createTextNode("Ver Productos"));
@@ -161,6 +188,7 @@ function menuCategoryShopPopulate(shop, erp){
     var categoriesShop = [];
     var category;
     var cat = document.getElementById("listCategories");
+    var categoryRep;
     
     removeChildsElement(cat);
     
@@ -175,8 +203,8 @@ function menuCategoryShopPopulate(shop, erp){
         }
     }
     
-    for (var i=0; i<categoriesShop.length; i++){
-        a = document.createElement("a");
+    for (i=0; i<categoriesShop.length; i++){
+        var a = document.createElement("a");
         a.setAttribute("href", "#");
         a.setAttribute("class", "list-group-item");
         a.appendChild(document.createTextNode(categoriesShop[i].title));
@@ -186,7 +214,7 @@ function menuCategoryShopPopulate(shop, erp){
       
 }
 
-function productCategory(product, erp){
+function productCategory(product){
     
         function compareElements(element){
 			return (element.serialNumber === product.serialNumber)
@@ -195,7 +223,6 @@ function productCategory(product, erp){
         var categories = sh.categories;
         var category = categories.next();
         var index = -1;
-        var name;
         
         while (category.done !== true && index == -1 ){
             
@@ -229,7 +256,7 @@ function productsCategoryShopPopulate(erp, shop, category){
         var divSct1 = document.getElementById("sct1");
         removeChildsElement(divSct1);
 
-        for(var i=0; i<productsCategory.length; i++){
+        for(i=0; i<productsCategory.length; i++){
             productShopPopulate(divSct1, productsCategory[i]);
         }
     }
@@ -237,29 +264,29 @@ function productsCategoryShopPopulate(erp, shop, category){
 
 function productShopPopulate(element, product){
     
-        divCol = document.createElement("div");
+        var divCol = document.createElement("div");
         divCol.setAttribute("class", "col-sm-4 col-lg-4 col-md-4");
 
-        divThumb = document.createElement("div");
+        var divThumb = document.createElement("div");
         divThumb.setAttribute("class", "thumbnail");
 
-        img = document.createElement("img");
-        img.setAttribute("src", "http://placehold.it/320x150");
+        var img = document.createElement("img");
+        img.setAttribute("src", product.product.images[0]);
         divThumb.appendChild(img);
 
-        divCap = document.createElement("div");
+        var divCap = document.createElement("div");
         divCap.setAttribute("class", "caption");
 
-        h4 = document.createElement("h4");
+        var h4 = document.createElement("h4");
         h4.appendChild(document.createTextNode(product.product.name));
         divCap.appendChild(h4);
 
-        h4price = document.createElement("h4");
+        var h4price = document.createElement("h4");
         h4price.setAttribute("class", "pull-right");
         h4price.appendChild(document.createTextNode(product.product.price+" €"));
         divCap.appendChild(h4price);
 
-        p = document.createElement("p");
+        var p = document.createElement("p");
         p.appendChild(document.createTextNode(product.product.description));
         divCap.appendChild(p);
 
@@ -267,7 +294,7 @@ function productShopPopulate(element, product){
         p.appendChild(document.createTextNode("Tax: "+product.product.tax));
         divCap.appendChild(p);
 
-        a = document.createElement("a");
+        var a = document.createElement("a");
         a.appendChild(document.createTextNode("Ver info general"));
         a.setAttribute("class", "pull-right");
         a.addEventListener("click", globalProductPopulate(product.product))
@@ -282,10 +309,12 @@ function productShopPopulate(element, product){
         element.appendChild(divCol); 
 }
 
+//Esta funcion se implementará en una ventana en la practica 6.
 function globalProductPopulate(product){
+
     return function(){
 		alert(product.toString());
-	} 
+	}
 }
 
 
